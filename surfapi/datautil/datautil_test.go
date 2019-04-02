@@ -5,26 +5,37 @@ import (
 	"testing"
 )
 
+var sampleRow = `2019 04 02 16 00  1.8  1.8 14.8  0.2  3.4 WNW NNW      SWELL  9.3 286`
+
+var sampleData = `
+#YY  MM DD hh mm WVHT  SwH  SwP  WWH  WWP SwD WWD  STEEPNESS  APD MWD
+#yr  mo dy hr mn    m    m  sec    m  sec  -  degT     -      sec degT
+2019 04 02 16 00  1.8  1.8 14.8  0.2  3.4 WNW NNW      SWELL  9.3 286
+2019 04 02 15 00  1.7  1.7 16.0  0.2  3.4 WNW NNE      SWELL  9.4 288
+2019 04 02 14 00  1.5  1.5 13.8  0.2  3.6 WNW NNW      SWELL  9.1 285
+2019 04 02 13 00  1.7  1.7 17.4  0.2  3.8 WNW NNE      SWELL 10.1 288
+2019 04 02 12 00  1.9  1.8 16.0  0.2  3.7 WNW NNW      SWELL 10.5 289`
+
 var url string = "https://www.ndbc.noaa.gov/data/realtime2/46029.spec"
 
-func TestGetBouyData(t *testing.T) {
-	rawBouyData := GetBouyData(url)
-	var testData []byte
+// func TestGetBouyData(t *testing.T) {
+// 	rawBouyData := GetBouyData(url)
+// 	var testData []byte
 
-	if reflect.TypeOf(rawBouyData) != reflect.TypeOf(testData) {
-		t.Errorf("Expected %T, got %T", testData, rawBouyData)
-	}
-}
+// 	if reflect.TypeOf(rawBouyData) != reflect.TypeOf(testData) {
+// 		t.Errorf("Expected %T, got %T", testData, rawBouyData)
+// 	}
+// }
 
-func TestHandleRawData(t *testing.T) {
-	rawBouyData := GetBouyData(url)
-	bouyData := HandleRawData(rawBouyData)
-	var testData [][]string
+// func TestHandleRawData(t *testing.T) {
+// 	rawBouyData := GetBouyData(url)
+// 	bouyData := HandleRawData(rawBouyData)
+// 	var testData [][]string
 
-	if reflect.TypeOf(bouyData) != reflect.TypeOf(testData) {
-		t.Errorf("Expected %T, got %T", testData, bouyData)
-	}
-}
+// 	if reflect.TypeOf(bouyData) != reflect.TypeOf(testData) {
+// 		t.Errorf("Expected %T, got %T", testData, bouyData)
+// 	}
+// }
 
 func TestGetLatestData(t *testing.T) {
 	rawBouyData := GetBouyData(url)
@@ -114,28 +125,6 @@ func TestGetWaveSizeScore(t *testing.T) {
 		t.Errorf("Expected %T, got %T", testData, waveSizeScore)
 	}
 }
-
-// func TestCalculateSurfRating(t *testing.T) {
-// 	// rawBouyData := GetBouyData(url)
-// 	// bouyData := HandleRawData(rawBouyData)
-// 	// surfRating := CalculateSurfRating(bouyData)
-// 	tables := []struct {
-// 		testArray [][]string
-// 	}{
-// 		{[][]string{["2019", "4", "1", "16", "0", "1.7", "1.7", "17.4", "0.3", "4", "W", "NNW", "SWELL", "11.4", "280"]}},
-// 	}
-
-// 	for _, table := range tables {
-// 		score := CalculateSurfRating(table.testArray)
-// 		if score != table.n {
-// 			t.Errorf(" Expected %v , got %v", score, table.n)
-// 		}
-// 	}
-
-// 	if reflect.TypeOf(surfRating) != reflect.TypeOf(testData) {
-// 		t.Errorf("Expected %T, got %T", table.testType, surfRating)
-// 	}
-// }
 
 func TestCalculateSurRatingf(t *testing.T) {
 	tables := []struct {

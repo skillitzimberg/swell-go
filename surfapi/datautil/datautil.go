@@ -50,6 +50,49 @@ func removeEmptySpace(arrayWithSpaces []string) []string {
 	return cleanedData
 }
 
+func ParseRow(row string) (SurfData, error) {
+	errFunc := func(err error) {
+		return SurfData{}, err
+	}
+	hourlyData := strings.Split(row, " ")
+	year, err := strconv.Atoi(hourlyData[0])
+	if err != nil {
+		return SurfData{}, err
+	}
+	month, err := strconv.Atoi(hourlyData[1])
+	day, _ := strconv.Atoi(hourlyData[2])
+	hour, _ := strconv.Atoi(hourlyData[3])
+	minute, _ := strconv.Atoi(hourlyData[4])
+	WVHT, _ := strconv.ParseFloat(hourlyData[5], 64)
+	SwH, _ := strconv.ParseFloat(hourlyData[6], 64)
+	SwP, _ := strconv.ParseFloat(hourlyData[7], 64)
+	WWH, _ := strconv.ParseFloat(hourlyData[8], 64)
+	WWP, _ := strconv.ParseFloat(hourlyData[9], 64)
+	SwD := hourlyData[10]
+	WWD := hourlyData[11]
+	steepness := hourlyData[12]
+	APD, _ := strconv.ParseFloat(hourlyData[13], 64)
+	MWD, _ := strconv.Atoi(hourlyData[14])
+
+	surfData := SurfData{
+		Year:      0,
+		Month:     0,
+		Day:       0,
+		Hour:      0,
+		Minute:    0,
+		WVHT:      0.0,
+		SwH:       0.0,
+		SwP:       0.0,
+		WWH:       0.0,
+		WWP:       0.0,
+		SwD:       "",
+		WWD:       "",
+		Steepness: "",
+		APD:       0.0,
+		MWD:       0,
+	}
+}
+
 func DataToStructs(dataRows [][]string) []SurfData {
 	var surfDataStructs []SurfData
 

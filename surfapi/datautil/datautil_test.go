@@ -115,48 +115,40 @@ func TestGetWaveSizeScore(t *testing.T) {
 	}
 }
 
-func TestCalculateSurfRating(t *testing.T) {
-	// rawBouyData := GetBouyData(url)
-	// bouyData := HandleRawData(rawBouyData)
-	// surfRating := CalculateSurfRating(bouyData)
+// func TestCalculateSurfRating(t *testing.T) {
+// 	// rawBouyData := GetBouyData(url)
+// 	// bouyData := HandleRawData(rawBouyData)
+// 	// surfRating := CalculateSurfRating(bouyData)
+// 	tables := []struct {
+// 		testArray [][]string
+// 	}{
+// 		{[][]string{["2019", "4", "1", "16", "0", "1.7", "1.7", "17.4", "0.3", "4", "W", "NNW", "SWELL", "11.4", "280"]}},
+// 	}
+
+// 	for _, table := range tables {
+// 		score := CalculateSurfRating(table.testArray)
+// 		if score != table.n {
+// 			t.Errorf(" Expected %v , got %v", score, table.n)
+// 		}
+// 	}
+
+// 	if reflect.TypeOf(surfRating) != reflect.TypeOf(testData) {
+// 		t.Errorf("Expected %T, got %T", table.testType, surfRating)
+// 	}
+// }
+
+func TestCalculateSurRatingf(t *testing.T) {
 	tables := []struct {
 		testArray [][]string
+		testScore float64
 	}{
-		{[][]string{["2019", "4", "1", "16", "0", "1.7", "1.7", "17.4", "0.3", "4", "W", "NNW", "SWELL", "11.4", "280"]}},
+		{[][]string{{"2019", "4", "1", "16", "0", "1.7", "1.7", "17.4", "0.3", "4", "W", "NNW", "SWELL", "11.4", "280"}, {"2019", "4", "1", "16", "0", "1.7", "2.3", "17.4", "0.3", "4", "W", "NNW", "SWELL", "11.4", "280"}}, (10 / 3.0)},
 	}
 
 	for _, table := range tables {
 		score := CalculateSurfRating(table.testArray)
-		if score != table.n {
-			t.Errorf(" Expected %v , got %v", score, table.n)
+		if score != table.testScore {
+			t.Errorf(" Expected %v , got %v", table.testScore, score)
 		}
 	}
-
-	if reflect.TypeOf(surfRating) != reflect.TypeOf(testData) {
-		t.Errorf("Expected %T, got %T", table.testType, surfRating)
-	}
-}
-
-
-func TestCalculateSurf(t *testing.T) {
-	tables := []struct {
-		testArray []string
-	}{
-		[]string{"2019", "4", "1", "16", "0", "1.7", "1.7", "17.4", "0.3", "4", "W", "NNW", "SWELL", "11.4", "280"},
-	}
-
-	for _, table := range tables {
-		score := CalculateSurf([table.testArray])
-		if score != table.n {
-			t.Errorf(" Expected %v , got %v", score, table.n)
-		}
-	}
-
-	swellPeriod := getSwellPeriod([tabletestArray])
-	swellPeriodScore := getSwellPeriodScore(swellPeriod)
-	windDirection := getWindDirection([testArray])
-	windDirectionScore := getWindDirectionScore(windDirection)
-	waveSizeScore := getWaveSizeScore([testArray])
-	surfRating := ((swellPeriodScore + waveSizeScore + windDirectionScore) / 3.0)
-	return surfRating
 }

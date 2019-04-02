@@ -175,13 +175,3 @@ func CalculateSurfRating(cleanedData [][]string) float64 {
 	surfRating := ((swellPeriodScore + waveSizeScore + windDirectionScore) / 3.0)
 	return surfRating
 }
-
-func CalculateSurf(cleanedData [][]string) float64 {
-	swellPeriod := getSwellPeriod(cleanedData)
-	swellPeriodScore := getSwellPeriodScore(swellPeriod)
-	windDirection := getWindDirection(cleanedData)
-	windDirectionScore := getWindDirectionScore(windDirection)
-	waveSizeScore := getWaveSizeScore(cleanedData)
-	surfRating := ((swellPeriodScore + waveSizeScore + windDirectionScore) / 3.0)
-	return surfRating
-}

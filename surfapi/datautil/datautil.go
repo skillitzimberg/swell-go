@@ -2,7 +2,6 @@ package datautil
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -42,9 +41,7 @@ import (
 func getLatestData(rawData string) []string {
 	text := string(rawData)
 	stringsOnReturn := strings.Split(text, "\n")
-	fmt.Println(stringsOnReturn)
 	latestData := strings.Split(stringsOnReturn[2], " ")
-	fmt.Println(latestData)
 	return latestData
 }
 
@@ -186,11 +183,7 @@ func CalculateSurfRating(surfData SurfData) float64 {
 	swellPeriodScore := float64(getSwellPeriodScore(surfData.SwP))
 	windDirectionScore := float64(getWindDirectionScore(surfData.WWD))
 	waveSizeScore := float64(getWaveSizeScore(surfData.SwP, surfData.SwH))
-	fmt.Printf("%v\n", swellPeriodScore)
-	fmt.Printf("%v\n", windDirectionScore)
-	fmt.Printf("%v\n", waveSizeScore)
 	numerator := (swellPeriodScore + waveSizeScore + windDirectionScore)
-	fmt.Printf("%v\n", numerator)
 	surfRating := (numerator / 3.0)
 	return surfRating
 }

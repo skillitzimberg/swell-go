@@ -6,119 +6,92 @@ import (
 	"strings"
 )
 
-// func GetBouyData(url string) []byte {
-
-// 	response, err := http.Get(url)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer response.Body.Close()
-
-// 	responseData, err := ioutil.ReadAll(response.Body)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	return responseData
-// }
-
-// func HandleRawData(responseData []byte) [][]string {
-// 	text := string(responseData)
-// 	stringsOnReturn := strings.Split(text, "\n")
-// 	var stringsOnTabs []string
-// 	cleanedData := make([]string, 0, len(stringsOnTabs))
-// 	dataRows := make([][]string, 0, len(stringsOnReturn))
-
-// 	for i := 2; i < 24; i++ {
-// 		stringsOnTabs = strings.Split(stringsOnReturn[i], " ")
-// 		cleanedData = removeEmptySpace(stringsOnTabs)
-// 		dataRows = append(dataRows, cleanedData)
-// 	}
-
-// 	return dataRows
-// }
-
-func getLatestData(rawData string) []string {
-	text := string(rawData)
-	stringsOnReturn := strings.Split(text, "\n")
-	latestData := strings.Split(stringsOnReturn[2], " ")
-	return latestData
+func parseDataInRows(bouyData string) (bouyDataArray []string) {
+	arrayOfRows := strings.Split(bouyData, "\n")
+	bouyDataArray = arrayOfRows[2:]
+	return
 }
 
-func removeEmptySpace(dataRow string) []string {
-	dataArray := strings.Split(dataRow, " ")
-	var cleanedData = make([]string, 0, len(dataArray))
-	for j := 0; j < len(dataArray); j++ {
-		if dataArray[j] != "" {
-			cleanedData = append(cleanedData, dataArray[j])
-		}
+func PackageStructsForJson(bouyDataArray []string) (packagedBouyDataStructs []BouyData) {
+	for _, bouyData := range bouyDataArray {
+		rowArray := rowIntoArray(bouyData)
+		hourlyData, _ := RowArrayToStruct(rowArray)
+		packagedBouyDataStructs = append(packagedBouyDataStructs, hourlyData)
 	}
-	return cleanedData
+	return
 }
 
-func rowDataToStruct(hourlyData []string) (SurfData, error) {
-	var surfData SurfData
-	var err error
+func getCurrentData(dataRows []string) (row string) {
+	row = dataRows[0]
+	return row
+}
 
-	if len(hourlyData) != 15 {
+func rowIntoArray(row string) (rowArray []string) {
+	rowArray = strings.Fields(row)
+	return
+}
+
+func RowArrayToStruct(rowArray []string) (hourlyData BouyData, err error) {
+
+	if len(rowArray) != 15 {
 		err = errors.New("Cannot work with an array less or greater than length of 15")
-		return SurfData{}, err
+		return BouyData{}, err
 	}
 
-	for j := 0; j < len(hourlyData); j++ {
-		Year, err := strconv.Atoi(hourlyData[0])
+	for j := 0; j < len(rowArray); j++ {
+		Year, err := strconv.Atoi(rowArray[0])
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		Month, err := strconv.Atoi(hourlyData[1])
+		Month, err := strconv.Atoi(rowArray[1])
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		Day, err := strconv.Atoi(hourlyData[2])
+		Day, err := strconv.Atoi(rowArray[2])
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		Hour, err := strconv.Atoi(hourlyData[3])
+		Hour, err := strconv.Atoi(rowArray[3])
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		Minute, err := strconv.Atoi(hourlyData[4])
+		Minute, err := strconv.Atoi(rowArray[4])
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		WVHT, err := strconv.ParseFloat(hourlyData[5], 64)
+		WVHT, err := strconv.ParseFloat(rowArray[5], 64)
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		SwH, err := strconv.ParseFloat(hourlyData[6], 64)
+		SwH, err := strconv.ParseFloat(rowArray[6], 64)
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		SwP, err := strconv.ParseFloat(hourlyData[7], 64)
+		SwP, err := strconv.ParseFloat(rowArray[7], 64)
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		WWH, err := strconv.ParseFloat(hourlyData[8], 64)
+		WWH, err := strconv.ParseFloat(rowArray[8], 64)
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		WWP, err := strconv.ParseFloat(hourlyData[9], 64)
+		WWP, err := strconv.ParseFloat(rowArray[9], 64)
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		SwD := hourlyData[10]
-		WWD := hourlyData[11]
-		Steepness := hourlyData[12]
-		APD, err := strconv.ParseFloat(hourlyData[13], 64)
+		SwD := rowArray[10]
+		WWD := rowArray[11]
+		Steepness := rowArray[12]
+		APD, err := strconv.ParseFloat(rowArray[13], 64)
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
-		MWD, err := strconv.Atoi(hourlyData[14])
+		MWD, err := strconv.Atoi(rowArray[14])
 		if err != nil {
-			return SurfData{}, err
+			return BouyData{}, err
 		}
 
-		surfData = SurfData{
+		hourlyData = BouyData{
 			Year,
 			Month,
 			Day,
@@ -136,124 +109,5 @@ func rowDataToStruct(hourlyData []string) (SurfData, error) {
 			MWD,
 		}
 	}
-	return surfData, err
+	return
 }
-
-func getSwellPeriodScore(swellPeriod float64) float64 {
-	if swellPeriod >= 16 {
-		return 5
-	} else if swellPeriod >= 13 {
-		return 4
-	} else if swellPeriod >= 10 {
-		return 3
-	} else {
-		return 1
-	}
-}
-
-func getWindDirectionScore(windDirection string) float64 {
-	if windDirection == "E" {
-		return 5
-	} else if windDirection == "NE" || windDirection == "SE" {
-		return 4
-	} else if windDirection == "S" {
-		return 3
-	} else {
-		return 1
-	}
-}
-
-func getWaveSizeScore(swellHeight, swellPeriod float64) float64 {
-	waveSize := swellHeight * swellPeriod
-
-	if waveSize >= 30 {
-		return 5
-	} else if waveSize >= 25 {
-		return 4
-	} else if waveSize >= 20 {
-		return 3
-	} else if waveSize >= 11 {
-		return 2
-	} else {
-		return 1
-	}
-}
-
-func CalculateSurfRating(surfData SurfData) float64 {
-	swellPeriodScore := float64(getSwellPeriodScore(surfData.SwP))
-	windDirectionScore := float64(getWindDirectionScore(surfData.WWD))
-	waveSizeScore := float64(getWaveSizeScore(surfData.SwP, surfData.SwH))
-	numerator := (swellPeriodScore + waveSizeScore + windDirectionScore)
-	surfRating := (numerator / 3.0)
-	return surfRating
-}
-
-// func DataToStructs(dataRows [][]string) []SurfData {
-// 	var surfDataStructs []SurfData
-
-// 	for i := 0; i < len(dataRows); i++ {
-// 		hourlyData := dataRows[i]
-// 		for j := 0; j < len(hourlyData); j++ {
-// 		}
-
-// 		year, _ := strconv.Atoi(hourlyData[0])
-// 		month, _ := strconv.Atoi(hourlyData[1])
-// 		day, _ := strconv.Atoi(hourlyData[2])
-// 		hour, _ := strconv.Atoi(hourlyData[3])
-// 		minute, _ := strconv.Atoi(hourlyData[4])
-// 		WVHT, _ := strconv.ParseFloat(hourlyData[5], 64)
-// 		SwH, _ := strconv.ParseFloat(hourlyData[6], 64)
-// 		SwP, _ := strconv.ParseFloat(hourlyData[7], 64)
-// 		WWH, _ := strconv.ParseFloat(hourlyData[8], 64)
-// 		WWP, _ := strconv.ParseFloat(hourlyData[9], 64)
-// 		SwD := hourlyData[10]
-// 		WWD := hourlyData[11]
-// 		steepness := hourlyData[12]
-// 		APD, _ := strconv.ParseFloat(hourlyData[13], 64)
-// 		MWD, _ := strconv.Atoi(hourlyData[14])
-
-// 		var surfData = SurfData{
-// 			year,
-// 			month,
-// 			day,
-// 			hour,
-// 			minute,
-// 			WVHT,
-// 			SwH,
-// 			SwP,
-// 			WWH,
-// 			WWP,
-// 			SwD,
-// 			WWD,
-// 			steepness,
-// 			APD,
-// 			MWD,
-// 		}
-
-// 		surfDataStructs = append(surfDataStructs, surfData)
-// 	}
-// 	return surfDataStructs
-// }
-
-// func getSwellHeight(cleanedData [][]string) float64 {
-// 	latestData := getLatestData(cleanedData)
-// 	convertSwHToInt, err := strconv.ParseFloat(latestData[6], 64)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return convertSwHToInt
-// }
-
-// func getSwellPeriod(cleanedData [][]string) float64 {
-// 	latestData := getLatestData(cleanedData)
-// 	convertSwPToInt, err := strconv.ParseFloat(latestData[7], 64)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return convertSwPToInt
-// }
-
-// func getWindDirection(cleanedData [][]string) string {
-// 	latestData := getLatestData(cleanedData)
-// 	return latestData[11]
-// }

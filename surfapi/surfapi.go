@@ -18,8 +18,7 @@ func dataToJson(w http.ResponseWriter, r *http.Request) {
 
 	url := "https://www.ndbc.noaa.gov/data/realtime2/46029.spec"
 	rawBouyData := datautil.GetBouyData(url)
-	bouyData := datautil.HandleRawData(rawBouyData)
-	packagedBouyData := datautil.DataToStructs(bouyData)
+	packagedBouyData := datautil.PackageStructsForJson(bouyData)
 
 	js, err := json.Marshal(packagedBouyData)
 	if err != nil {
